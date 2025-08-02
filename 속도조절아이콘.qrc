@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>C:\Users\pjo77\Downloads\test file\속도조절.png</file>
+        <file>C:\Users\pjo77\Downloads\test file\찐속도조절.png</file>
+        <file>C:\Users\pjo77\Downloads\test file\속도조절찐.png</file>
+        <file>C:\Users\pjo77\Downloads\test file\긴급전화.png</file>
+        <file>C:\Users\pjo77\Downloads\test file\위치지도.png</file>
+
+    </qresource>
+</RCC>

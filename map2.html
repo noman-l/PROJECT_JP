@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>내 위치 표시</title>
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=22wt5rtwpp"></script>
+</head>
+<body>
+<div id="map" style="width:100%;height:400px;"></div>
+<div id="coordinates" style="position: absolute; bottom: 10px; left: 10px; background-color: white; padding: 5px; border: 1px solid black;">
+    경도: 로딩 중..., 위도: 로딩 중...
+</div>
+
+<script>
+var map;
+var marker;
+
+function initMap(latitude, longitude) {
+    var mapOptions = {
+        center: new naver.maps.LatLng(latitude, longitude),
+        zoom: 15
+    };
+    map = new naver.maps.Map('map', mapOptions);
+
+    // 마커 생성
+    marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(latitude, longitude),
+        map: map
+    });
+}
+
+function updateLocationByXML() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() { // 요청에 대한 콜백
+        if (xhr.readyState === xhr.DONE) { // 요청이 완료되면
+            if (xhr.status === 200 || xhr.status === 201) {999999999
+                var data = xhr.response;
+                var latitude = data.latitude;
+                var longitude = data.longitude;
+
+                if (latitude == null) return;
+                if (longitude == null) return;
+
+                // 수신된 위치로 지도와 마커 업데이트
+                var newPosition = new naver.maps.LatLng(latitude, longitude);
+                map.setCenter(newPosition);
+                marker.setPosition(newPosition);
+
+                // 경도와 위도를 표시하는 텍스트 업데이트
+                document.getElementById("coordinates").innerText = `경도: ${longitude}, 위도: ${latitude}`;
+            } else {
+                document.getElementById("coordinates").innerText = "GPS 데이터를 가져오는데 실패했습니다.";
+            }
+        }
+    };
+    xhr.open('GET', 'http://127.0.0.1:8001/location'); // 메소드와 주소 설정
+    xhr.send(); // 요청 전송
+}
+
+initMap(37.6303483, 126.8335345);
+
+updateLocationByXML();
+
+setInterval(() => {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() { // 요청에 대한 콜백
+        if (xhr.readyState === xhr.DONE) { // 요청이 완료되면
+            if (xhr.status === 200 || xhr.status === 201) {
+                var data = JSON.parse(xhr.responseText);
+                var latitude = data.latitude;
+                var longitude = data.longitude;
+
+                if (latitude == null) return;
+                if (longitude == null) return;
+
+                // 수신된 위치로 지도와 마커 업데이트
+                var newPosition = new naver.maps.LatLng(latitude, longitude);
+                map.setCenter(newPosition);
+                marker.setPosition(newPosition);
+
+                // 경도와 위도를 표시하는 텍스트 업데이트
+                document.getElementById("coordinates").innerText = `경도: ${longitude}, 위도: ${latitude}`;
+            } else {
+                document.getElementById("coordinates").innerText = "GPS 데이터를 가져오는데 실패했습니다.";
+            }
+        }
+    };
+    xhr.open('GET', 'http://127.0.0.1:8001/location'); // 메소드와 주소 설정
+    xhr.send(); // 요청 전송
+}, 5000);
+
+// 5초마다 위치 업데이트
+// setInterval(updateLocationByXML, 5000);
+</script>
+</body>
+</html>
